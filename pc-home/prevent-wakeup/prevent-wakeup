@@ -1,0 +1,5 @@
+#!/bin/bash
+#uncomment to disable wakeup
+#echo EHC1 > /proc/acpi/wakeup #USB 2.0 where keyboard is connected
+echo EHC2 > /proc/acpi/wakeup #USB 2.0 where mouse is connected
+#echo XHC > /proc/acpi/wakeup #USB 3.0

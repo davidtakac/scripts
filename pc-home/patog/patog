@@ -1,0 +1,29 @@
+#!/bin/bash
+
+#initialize sink dict from config file
+declare -A config
+while read line
+do
+  sink=$(echo $line | cut -d '=' -f1)
+  config[$sink]=$(echo $line | cut -d '=' -f2)
+done < ~/.config/patog/patog.conf
+
+#get current default sink
+default_sink=$(pacmd info | grep 'Default sink' | awk -F ': ' '{print $2}')
+
+#toggle sink
+for sink in "${!config[@]}"
+do
+  if [[ "$sink" != "$default_sink" ]]
+  then
+    pacmd set-default-sink "$sink"
+    #move all streams to new sink
+    pacmd list-sink-inputs | grep 'index' | while IFS='\n' read -r line; do
+      sink_input_idx=$(awk -F ': ' '{print $2}' <<< $line)
+      pacmd move-sink-input "$sink_input_idx" "$sink"
+    done
+    #show notif
+    notify-send -i speaker 'Switched audio output' "${config[$sink]}"
+    exit 0
+  fi
+done

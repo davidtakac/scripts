@@ -1,0 +1,9 @@
+[Unit]
+Description=Disable wakeup events on startup
+
+[Service]
+Type=oneshot
+ExecStart=/bin/bash /home/dtakac/Documents/scripts/bash/prevent-wakeup/prevent-wakeup
+
+[Install]
+WantedBy=multi-user.target
