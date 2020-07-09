@@ -1,0 +1,20 @@
+# Universal bindings
+super + Return
+    xfce4-terminal
+
+super + k
+    rofi -show "drun"
+
+super + {Left, Right}
+    xdotool set_desktop --relative {-- -1, 1}
+
+super + c
+    xfce4-screenshooter -rc
+
+alt + super + c
+    xfce4-screenshooter -r --save $HOME/Pictures/screenshots
+
+super + F9
+    xfce4-session-logout
+
+# Add machine-specific bindings here
