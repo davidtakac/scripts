@@ -1,4 +1,3 @@
 # Instructions
-Put .config inside ~/.config/patog/patog.conf. Example config file included in repo. 
-{device name}={stylised device name}
+patog 'device_name=stylised_name' 'device2=stylised2'.
 Stylised device name displays inside of notif. Device name is in output of pactl list sinks.

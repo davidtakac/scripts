@@ -1,12 +1,18 @@
 #!/bin/bash
 
+# exactly two needed to toggle
+if [ "$#" -ne 2 ]; then
+  echo "Need two parameters."
+  exit 2
+fi
+
 #initialize sink dict from config file
 declare -A config
-while read line
+for line in "$@"
 do
   sink=$(echo $line | cut -d '=' -f1)
   config[$sink]=$(echo $line | cut -d '=' -f2)
-done < ~/.config/patog/patog.conf
+done
 
 #get current default sink
 default_sink=$(pacmd info | grep 'Default sink' | awk -F ': ' '{print $2}')
