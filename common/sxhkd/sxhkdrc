@@ -3,7 +3,7 @@ super + Return
     xfce4-terminal
 
 super + k
-    rofi -show "drun"
+    rofi -modi "drun" -show "drun"
 
 super + {Left, Right}
     xdotool set_desktop --relative {-- -1, 1}

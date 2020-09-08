@@ -1,7 +1,13 @@
 #!/bin/bash
 
+# exactly two needed to toggle
+if [ "$#" -ne 2 ]; then
+  echo "Need two parameters."
+  exit 2
+fi
 #first argument is name or id of device to toggle (name is constant, id dynamic)
 device=$1
+icon=$2
 #prints 0 or 1 if it's located at end of "Device Enabled" line
 state=$(xinput list-props "$device" | grep "Device Enabled" | grep -o "[01]$")
 #toggle device state
@@ -13,5 +19,5 @@ else
 	xinput disable "$device"
 	message="Off"
 fi
-
-notify-send -i touchpad "Touchpad" "$message"
+#notify on off
+notify-send -i "$icon" "$device" "$message"
