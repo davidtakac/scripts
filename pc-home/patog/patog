@@ -1,27 +1,17 @@
 #!/bin/bash
 
-# exactly two needed to toggle
-if [ "$#" -ne 2 ]; then
-  echo "Need two parameters."
-  exit 2
-fi
-
-#initialize sink dict from config file
-declare -A config
-for line in "$@"
-do
-  sink=$(echo $line | cut -d '=' -f1)
-  config[$sink]=$(echo $line | cut -d '=' -f2)
-done
+[ "$#" -ne 2 ] && {
+    echo "Need two parameters."
+    exit 2
+}
 
 #get current default sink
 default_sink=$(pacmd info | grep 'Default sink' | awk -F ': ' '{print $2}')
 
-#toggle sink
-for sink in "${!config[@]}"
-do
-  if [[ "$sink" != "$default_sink" ]]
-  then
+for line in "$@"; do
+  sink=$(echo $line | cut -d '=' -f1)
+  name=$(echo $line | cut -d '=' -f2)
+  [ "$sink" != "$default_sink"  ] && {
     pacmd set-default-sink "$sink"
     #move all streams to new sink
     pacmd list-sink-inputs | grep 'index' | while IFS='\n' read -r line; do
@@ -29,7 +19,7 @@ do
       pacmd move-sink-input "$sink_input_idx" "$sink"
     done
     #show notif
-    notify-send -i speaker 'Switched audio output' "${config[$sink]}"
+    notify-send -i speaker 'Switched audio output' "$name"
     exit 0
-  fi
+  }
 done
