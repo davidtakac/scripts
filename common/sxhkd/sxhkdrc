@@ -17,4 +17,7 @@ alt + super + c
 super + F9
     xfce4-session-logout
 
+super + r
+    pkill -USR1 '^redshift$'
+
 # Add machine-specific bindings here
