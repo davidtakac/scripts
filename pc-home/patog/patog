@@ -9,13 +9,13 @@
 default_sink=$(pacmd info | grep 'Default sink' | awk -F ': ' '{print $2}')
 
 for line in "$@"; do
-  sink=$(echo $line | cut -d '=' -f1)
-  name=$(echo $line | cut -d '=' -f2)
+  sink=$(cut -d '=' -f1 <<< "$line")
+  name=$(cut -d '=' -f2 <<< "$line")
   [ "$sink" != "$default_sink"  ] && {
     pacmd set-default-sink "$sink"
     #move all streams to new sink
     pacmd list-sink-inputs | grep 'index' | while IFS='\n' read -r line; do
-      sink_input_idx=$(awk -F ': ' '{print $2}' <<< $line)
+      sink_input_idx=$(awk -F ': ' '{print $2}' <<< "$line")
       pacmd move-sink-input "$sink_input_idx" "$sink"
     done
     #show notif
