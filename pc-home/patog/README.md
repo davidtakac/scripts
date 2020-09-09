@@ -1,3 +1,5 @@
 # Instructions
-patog 'device_name=stylised_name' 'device2=stylised2'.
-Stylised device name displays inside of notif. Device name is in output of pactl list sinks.
+Usage: `patog 'device1=stylised1' 'device2=stylised2'`  
+"device" can be retrieved with: `pactl list sinks | grep 'Name'`.  
+"stylised" can be anything you want to show in the notification (eg. "Mayonnaise")  
+Example: `patog "alsa_output.usb-Burr-Brown_from_TI_USB_Audio_CODEC-00.analog-stereo=Headphones" "alsa_output.pci-0000_00_1b.0.analog-stereo=Speakers"`
