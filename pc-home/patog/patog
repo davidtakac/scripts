@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-[ "$#" -ne 2 ] && {
-    echo 'Need two parameters.'
+[ "$#" -lt 2 ] && {
+    echo 'Need at least two parameters.'
     exit 2
 }
 
@@ -22,6 +22,8 @@ for line in "$@"; do
     notify-send -i 'audio-card' 'Audio output' "$name"
     #write current sink to file
     echo "$name" > ~/.local/share/patog/state.txt
+    #update genmon plugin (if provided)
+    [ -n $3 ] && sh -c "xfce4-panel --plugin-event=$3:refresh:bool:true"
     exit 0
   }
 done
