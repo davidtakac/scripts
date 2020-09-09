@@ -1,12 +1,12 @@
 #!/bin/bash
 
 [ "$#" -ne 2 ] && {
-    echo "Need two parameters."
+    echo 'Need two parameters.'
     exit 2
 }
 
 #get current default sink
-default_sink=$(pacmd info | grep 'Default sink' | awk -F ': ' '{print $2}')
+default_sink=$(pacmd info | grep 'Default sink name' | awk -F ': ' '{print $2}')
 
 for line in "$@"; do
   sink=$(cut -d '=' -f1 <<< "$line")
