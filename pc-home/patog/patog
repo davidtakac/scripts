@@ -19,7 +19,9 @@ for line in "$@"; do
       pacmd move-sink-input "$sink_input_idx" "$sink"
     done
     #show notif
-    notify-send -i speaker 'Switched audio output' "$name"
+    notify-send -i 'audio-card' 'Audio output' "$name"
+    #write current sink to file
+    echo "$name" > ~/.local/share/patog/state.txt
     exit 0
   }
 done
