@@ -21,7 +21,7 @@ for line in "$@"; do
     #show notif
     notify-send -i 'audio-card' 'Audio output' "$name"
     #write current sink to file
-    echo "$name" > ~/.local/share/patog/state.txt
+    echo "<txt>$name</txt><tool>Sink name: $sink</tool>" > ~/.local/share/patog/state.txt
     #update genmon plugin (if provided)
     [ -n $3 ] && sh -c "xfce4-panel --plugin-event=$3:refresh:bool:true"
     exit 0
