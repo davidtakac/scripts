@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
+
 entry_id="$(grep 'windows' /boot/grub2/grub.cfg | awk -F ' ' '{ print $(NF-1) }')"
+eval entry_id=$entry_id #strips single quotes around the ID
 grub2-reboot "$entry_id"
-xfce4-session-logout --reboot
+reboot
 exit 0

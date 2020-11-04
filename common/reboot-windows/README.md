@@ -1,1 +1,5 @@
-Finds Windows menuentry in grub.cfg, sets it as default for next boot and reboots the PC. Need sudo permission to run. 
+1. Finds windows menuentry in grub.cfg
+2. Sets it as default only for next boot
+3. Reboots the PC
+
+Needs to be run with sudo privileges.
