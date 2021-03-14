@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+
+[ "$EUID" -ne 0 ] && echo "Needs to be run as root" && exit
+
+echo
+echo "---BACKUP START---"
+date
+
+echo "--MAINTENANCE MODE ON--"
+/snap/bin/nextcloud.occ maintenance:mode --on
+
+echo "--DATA BACKUP--"
+rsync -Aavx /media/nextcloud/data /media/nextcloud-backup/data-backup --delete
+
+echo "--NEXTCLOUD BACKUP--"
+rsync -Aavx /var/snap/nextcloud /media/nextcloud-backup/nextcloud-backup --delete
+
+echo "--DATABASE BACKUP--"
+/snap/bin/nextcloud.mysqldump > /media/nextcloud-backup/database-backup/sql-backup.bak
+
+echo "--MAINTENANCE MODE OFF--"
+/snap/bin/nextcloud.occ maintenance:mode --off
+
+echo "---BACKUP END---"
+exit
