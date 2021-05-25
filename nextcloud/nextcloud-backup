@@ -1,25 +1,24 @@
 #!/usr/bin/env bash
 
-[ "$EUID" -ne 0 ] && echo "Needs to be run as root" && exit
+# Must be run as root
+[ "$EUID" -ne 0 ] && {
+	echo "Error: Needs to be run as root" >&2
+	exit 1
+}
 
-echo
-echo "---BACKUP START---"
-date
+# Check if both drives are mounted
+mountpoint "/media/backup" && mountpoint "/media/data" || {
+	echo "Error: data or backup not mounted." >&2
+	exit 1
+}	
 
-echo "--MAINTENANCE MODE ON--"
+# Nextcloud backup with maintenance mode
 /snap/bin/nextcloud.occ maintenance:mode --on
-
-echo "--DATA BACKUP--"
-rsync -Aavx /media/nextcloud/data /media/nextcloud-backup/data-backup --delete
-
-echo "--NEXTCLOUD BACKUP--"
-rsync -Aavx /var/snap/nextcloud /media/nextcloud-backup/nextcloud-backup --delete
-
-echo "--DATABASE BACKUP--"
-/snap/bin/nextcloud.mysqldump > /media/nextcloud-backup/database-backup/sql-backup.bak
-
-echo "--MAINTENANCE MODE OFF--"
+rsync -rtv /media/data/files/ /media/backup/files --delete
 /snap/bin/nextcloud.occ maintenance:mode --off
 
-echo "---BACKUP END---"
+# Radicale backup with excluding unnecessary files (https://radicale.org/3.0.html#documentation/storage)
+# and locking the filesystem to prevent corruption (https://radicale.org/3.0.html#documentation/storage/locking/linux-shell-scripts)
+flock --exclusive /var/lib/radicale/collections/.Radicale.lock rsync -rtv /var/lib/radicale/collections/collection-root/ /media/backup/radicale/collection-root --delete --exclude '.Radicale.cache*' --exclude '.Radicale.tmp*'
+
 exit
