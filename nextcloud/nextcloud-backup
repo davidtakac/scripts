@@ -14,11 +14,11 @@ mountpoint "/media/backup" && mountpoint "/media/data" || {
 
 # Nextcloud backup with maintenance mode
 /snap/bin/nextcloud.occ maintenance:mode --on
-rsync -rtv /media/data/files/ /media/backup/files --delete
+rsync -av /media/data/files/ /media/backup/files
 /snap/bin/nextcloud.occ maintenance:mode --off
 
 # Radicale backup with excluding unnecessary files (https://radicale.org/3.0.html#documentation/storage)
 # and locking the filesystem to prevent corruption (https://radicale.org/3.0.html#documentation/storage/locking/linux-shell-scripts)
-flock --exclusive /var/lib/radicale/collections/.Radicale.lock rsync -rtv /var/lib/radicale/collections/collection-root/ /media/backup/radicale/collection-root --delete --exclude '.Radicale.cache*' --exclude '.Radicale.tmp*'
+flock --exclusive /var/lib/radicale/collections/.Radicale.lock rsync -av /var/lib/radicale/collections/collection-root/ /media/backup/radicale/collection-root --exclude '.Radicale.cache*' --exclude '.Radicale.tmp*'
 
 exit
