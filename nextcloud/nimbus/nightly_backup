@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+
+[ "$EUID" -ne 0 ] && {
+	echo "Error: Must be root." >&2
+	exit 1
+}
+
+NC_DIR='/var/www/nextcloud'
+DATA_DIR='/data/nextcloud'
+BACKUP_DIR='/backup/nextcloud/nightly'
+DB_NAME='nextcloud_db'
+
+# Prevents corruption
+sudo -u www-data php $NC_DIR/occ maintenance:mode --on
+
+# Backs up config, data and themes
+rsync -Aavx $NC_DIR/config $DATA_DIR $NC_DIR/themes $BACKUP_DIR/
+
+# Backs up the database (contacts, calendar...)
+sudo mysqldump --single-transaction --default-character-set=utf8mb4 $DB_NAME > $BACKUP_DIR/sql_backup
+
+sudo -u www-data php $NC_DIR/occ maintenance:mode --off
+
+exit
