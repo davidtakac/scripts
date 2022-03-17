@@ -1,0 +1,67 @@
+#!/usr/bin/env bash
+
+[ "$EUID" -ne 0 ] && {
+        echo "Error: Must be root." >&2
+        exit 1
+}
+
+dry_run=0
+backups_limit=6
+while getopts ":d:l:t" opt; do
+  case $opt in
+    d) backup_dir="$OPTARG"
+    ;;
+    l) backups_limit="$OPTARG"
+    ;;
+    t) dry_run=1
+    ;;
+    \?) echo "Invalid option -$OPTARG" >&2
+    ;;
+  esac
+done
+
+[ -z "${backup_dir+set}" ] && {
+        echo "Error: must specify backup dir with -d"
+        exit 1
+}
+
+echo "Backup directory: $backup_dir"
+echo "Max num backups in directory: $backups_limit"
+echo "Dry run: $dry_run"
+
+nc_dir='/var/www/nextcloud'
+data_dir='/data/nextcloud'
+db_name='nextcloud_db'
+
+archive_suffix="-bkp.tar.gz"
+archive_filename="$(date "+%d-%m-%Y")$archive_suffix"
+db_filename='/tmp/sql_bkp'
+
+sudo -u www-data php $nc_dir/occ maintenance:mode --on
+
+mysqldump --single-transaction --default-character-set=utf8mb4 $db_name > $db_filename
+
+[ "$dry_run" -eq 1 ] && archive="/dev/null" || archive="$backup_dir/$archive_filename"
+echo "Writing backup to $archive"
+# -c Creates new archive
+# -f Creates a file archive
+# -p Preserves permissions
+# -z Compresses with gzip
+# --acls Preserves ACLs
+# --xattrs Preserves extended attrs
+tar --acls --xattrs -vcpzf $archive \
+    $nc_dir/config \
+    $nc_dir/themes \
+    $data_dir \
+    $db_filename
+
+sudo -u www-data php $nc_dir/occ maintenance:mode --off
+
+# Cleans up old backups to save space
+num_backups=$(ls $backup_dir/*$archive_suffix | wc -l)
+[ "$num_backups" -gt "$backups_limit" ] && {
+    oldest_backup=$(ls -t $backup_dir | tail -1)
+    rm $oldest_backup
+}
+
+exit
