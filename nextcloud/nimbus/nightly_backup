@@ -17,7 +17,7 @@ sudo -u www-data php $NC_DIR/occ maintenance:mode --on
 rsync -Aavx $NC_DIR/config $DATA_DIR $NC_DIR/themes $BACKUP_DIR/
 
 # Backs up the database (contacts, calendar...)
-sudo mysqldump --single-transaction --default-character-set=utf8mb4 $DB_NAME > $BACKUP_DIR/sql_backup
+mysqldump --single-transaction --default-character-set=utf8mb4 $DB_NAME > $BACKUP_DIR/sql_backup
 
 sudo -u www-data php $NC_DIR/occ maintenance:mode --off
 
