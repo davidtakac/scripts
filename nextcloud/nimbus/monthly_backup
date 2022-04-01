@@ -30,8 +30,9 @@ echo "Max num backups in directory: $backups_limit"
 echo "Dry run: $dry_run"
 
 nc_dir='/var/www/nextcloud'
-data_dir='/data/nextcloud'
-db_name='nextcloud_db'
+nc_data_dir='/data/nextcloud'
+nc_db_name='nextcloud_db'
+users_dir='/data/users'
 
 archive_suffix="-bkp.tar.gz"
 archive_filename="$(date "+%d-%m-%Y")$archive_suffix"
@@ -39,25 +40,18 @@ db_filename='/tmp/sql_bkp'
 
 sudo -u www-data php $nc_dir/occ maintenance:mode --on
 
-mysqldump --single-transaction --default-character-set=utf8mb4 $db_name > $db_filename
+mysqldump --single-transaction --default-character-set=utf8mb4 $nc_db_name > $db_filename
 
 [ "$dry_run" -eq 1 ] && archive="/dev/null" || archive="$backup_dir/$archive_filename"
-echo "Writing backup to $archive"
-# -c Creates new archive
-# -f Creates a file archive
-# -p Preserves permissions
-# -z Compresses with gzip
-# --acls Preserves ACLs
-# --xattrs Preserves extended attrs
 tar --acls --xattrs -vcpzf $archive \
     $nc_dir/config \
     $nc_dir/themes \
-    $data_dir \
+    $nc_data_dir \
+    $users_dir \
     $db_filename
 
 sudo -u www-data php $nc_dir/occ maintenance:mode --off
 
-# Cleans up old backups to save space
 num_backups=$(ls $backup_dir/*$archive_suffix | wc -l)
 [ "$num_backups" -gt "$backups_limit" ] && {
     oldest_backup=$(ls -t $backup_dir | tail -1)
