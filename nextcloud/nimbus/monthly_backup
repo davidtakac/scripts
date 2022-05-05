@@ -6,12 +6,9 @@
 }
 
 dry_run=0
-backups_limit=6
-while getopts ":d:l:t" opt; do
+while getopts ":d:t" opt; do
   case $opt in
     d) backup_dir="$OPTARG"
-    ;;
-    l) backups_limit="$OPTARG"
     ;;
     t) dry_run=1
     ;;
@@ -26,7 +23,6 @@ done
 }
 
 echo "Backup directory: $backup_dir"
-echo "Max num backups in directory: $backups_limit"
 echo "Dry run: $dry_run"
 
 nc_dir='/var/www/nextcloud'
@@ -51,11 +47,5 @@ tar --acls --xattrs -vcpzf $archive \
     $db_filename
 
 sudo -u www-data php $nc_dir/occ maintenance:mode --off
-
-num_backups=$(ls $backup_dir/*$archive_suffix | wc -l)
-[ "$num_backups" -gt "$backups_limit" ] && {
-    oldest_backup=$(ls -t $backup_dir | tail -1)
-    rm $oldest_backup
-}
 
 exit
