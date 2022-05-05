@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+num_files=$(ls $1 | wc -l)
+[ "$num_files" -gt "$2" ] && {
+    oldest_file=$(ls -t $1 | tail -1)
+    rm $1/$oldest_file
+}
