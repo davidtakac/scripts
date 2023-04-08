@@ -7,10 +7,10 @@
 
 backup_dest='/backup/nightly'
 
-# Backup users
-rsync -Aavx /data/users $backup_dest/
-# Backup radicale
+users='/data/users'
 radicale='/data/radicale'
+
+rsync -Aavx $users $backup_dest/ --exclude '.Trash*'
 flock --exclusive $radicale/.Radicale.lock rsync -Aavx $radicale $backup_dest/ --exclude '.Radicale.cache' --exclude '.Radicale.lock' --exclude '.Radicale.tmp-*'
 
 exit
