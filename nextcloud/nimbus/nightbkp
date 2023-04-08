@@ -5,10 +5,12 @@
         exit 1
 }
 
-BACKUP_DIR='/backup/nightly'
+backup_dest='/backup/nightly'
 
-# Users
-USERS_DIR='/data/users'
-rsync -Aavx $USERS_DIR $BACKUP_DIR/
+# Backup users
+rsync -Aavx /data/users $backup_dest/
+# Backup radicale
+radicale='/data/radicale'
+flock --exclusive $radicale/.Radicale.lock rsync -Aavx $radicale $backup_dest/ --exclude '.Radicale.cache' --exclude '.Radicale.lock' --exclude '.Radicale.tmp-*'
 
 exit
