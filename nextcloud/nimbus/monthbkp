@@ -28,8 +28,10 @@ echo "Dry run: $dry_run"
 archive_suffix="-bkp.tar.gz"
 archive_filename="$(date "+%d-%m-%Y")$archive_suffix"
 [ "$dry_run" -eq 1 ] && archive="/dev/null" || archive="$backup_dir/$archive_filename"
+
+users='/data/users'
 radicale='/data/radicale'
 
-flock --exclusive $radicale/.Radicale.lock tar --acls --xattrs --exclude '.Trash*' --exclude '.Radicale.cache' --exclude '.Radicale.lock' --exclude '.Radicale.tmp-*' -vcpzf $archive /data/users $radicale
+flock --exclusive $radicale/.Radicale.lock tar --acls --xattrs --exclude '.Trash*' --exclude '.Radicale.cache' --exclude '.Radicale.lock' --exclude '.Radicale.tmp-*' -vcpzf $archive $users $radicale
 
 exit
