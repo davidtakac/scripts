@@ -7,16 +7,6 @@
 
 BACKUP_DIR='/backup/nightly'
 
-# Nextcloud
-NC_INSTALL_DIR='/var/www/nextcloud'
-NC_DATA_DIR='/data/nextcloud'
-NC_DB_NAME='nextcloud_db'
-
-sudo -u www-data php $NC_INSTALL_DIR/occ maintenance:mode --on
-rsync -Aavx $NC_INSTALL_DIR/config $NC_DATA_DIR $NC_INSTALL_DIR/themes $BACKUP_DIR/nextcloud/
-mysqldump --single-transaction --default-character-set=utf8mb4 $NC_DB_NAME > $BACKUP_DIR/nextcloud/sql_backup
-sudo -u www-data php $NC_INSTALL_DIR/occ maintenance:mode --off
-
 # Users
 USERS_DIR='/data/users'
 rsync -Aavx $USERS_DIR $BACKUP_DIR/
