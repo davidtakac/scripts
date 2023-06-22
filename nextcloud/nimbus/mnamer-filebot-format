@@ -1,0 +1,2 @@
+alias rshow='mnamer --episode-format "/data/media/TV Shows/{series}/Season {season:02}/{series} - S{season:02}E{episode:02} - {title}{extension}"'
+alias rmovie='mnamer --movie-format "/data/media/Movies/{name} ({year})/{name} ({year}){extension}"'
